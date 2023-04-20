@@ -6,6 +6,7 @@ new Api();
 class Api
 {
 	private static $db;
+	private static $sss;
 
 	public static function getDb()
 	{
