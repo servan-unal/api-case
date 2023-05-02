@@ -28,6 +28,28 @@ class ConstructionStagesPatchValidator {
             }
         }
 
+        if (!empty($patch->start_date) && !empty($patch->end_date) && !empty($patch->durationUnit)) {
+            $start = new DateTime($patch->start_date);
+            $end = new DateTime($patch->end_date);
+            $diff = $end->diff($start);
+            switch ($patch->durationUnit) {
+                case 'HOURS':
+                    $duration = $diff->h + ($diff->days * 24);
+                    break;
+                case 'WEEKS':
+                    $duration = ($diff->days + ($diff->y * 365) + ($diff->m * 30)) / 7 * 24;
+                    break;
+                case 'DAYS':
+                default:
+                    $duration = ($diff->days + ($diff->y * 365) + ($diff->m * 30)) * 24;
+                    break;
+            }
+            $patch->duration = round($duration, 2);
+        } elseif (empty($patch->duration)) {
+            $patch->duration = null;
+        }
+        
+
         if (!empty($patch->color) && !preg_match('/^#[a-f0-9]{6}$/i', $patch->color)) {
             throw new Exception("Color must be a valid HEX color i.e. #FF0000");
         }
