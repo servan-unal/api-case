@@ -6,7 +6,6 @@ new Api();
 class Api
 {
 	private static $db;
-	private static $sss;
 
 	public static function getDb()
 	{
@@ -38,6 +37,15 @@ class Api
 				'method' => 'post',
 				'bodyType' => 'ConstructionStagesCreate'
 			],
+			'patch constructionStages/(:num)' => [
+				'class' => 'ConstructionStages',
+				'method' => 'patch',
+				'bodyType' => 'ConstructionStagesPatch'
+			],
+			'delete constructionStages/(:num)' => [
+				'class' => 'ConstructionStages',
+				'method' => 'delete'
+			],
 		];
 
 		$response = [
@@ -51,7 +59,7 @@ class Api
 				if (preg_match('#^'.$pattern.'$#i', "{$httpVerb} {$uri}", $matches)) {
 					$params = [];
 					array_shift($matches);
-					if ($httpVerb === 'post') {
+					if ($httpVerb === 'post' || $httpVerb === 'patch') {
 						$data = json_decode(file_get_contents('php://input'));
 						$params = [new $target['bodyType']($data)];
 					}
